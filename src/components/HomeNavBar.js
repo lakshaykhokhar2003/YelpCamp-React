@@ -1,17 +1,17 @@
-import {Link} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import classes from "./HomeNavBar.module.css";
 import {useDispatch, useSelector} from "react-redux";
 import {authActions} from "../store";
 
 const MainNavbar = () => {
     const dispatch = useDispatch()
+    const location = useLocation()
     const isAuth = useSelector(state => state.auth.isAuthenticated);
-    const isUser = useSelector(state => state.auth.user);
-    const token = useSelector(state => state.auth.token);
-    const expire = useSelector(state => state.auth.expirationTime);
-    console.log(isAuth, isUser, token, expire)
+    // const isUser = useSelector(state => state.auth.user);
+    // const token = useSelector(state => state.auth.token);
+    // console.log(isAuth, isUser, token)
     const logoutHandler = () => {
-        dispatch(authActions.logOut())
+        dispatch(authActions.logout())
     }
 
     return (<nav className="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
@@ -29,7 +29,7 @@ const MainNavbar = () => {
             </div>
             <div className="navbar-nav ml-auto">
                 {!isAuth && (<>
-                    <Link to="/login" className="nav-link">Login</Link>
+                    <Link to="/login" className="nav-link" state={{prevUrl: location.pathname}}>Login</Link>
                     <Link to="/register" className="nav-link">Register</Link>
                 </>)}
                 {isAuth && <Link onClick={logoutHandler} to='/campgrounds'>Logout</Link>}

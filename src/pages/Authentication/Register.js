@@ -1,9 +1,12 @@
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 import axios from "axios";
+import {authActions} from "../../store";
+import {useDispatch} from "react-redux";
 
 const Register = () => {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -25,13 +28,13 @@ const Register = () => {
         try {
             const data = {username, email, password};
             const response = await axios.post("http://localhost:3000/register", data)
-            localStorage.setItem('token', response.data.token);
-            console.log(response.data, response.data.token);
-            if (response.data.status === 200) {
+            console.log(response.data.registerData)
+            if (response.status === 200) {
+                dispatch(authActions.registerSuccess(response.data.registerData))
                 navigate('/campgrounds')
             }
         } catch (e) {
-            console.log(e)
+            console.log("Error in Register: ", e)
         }
 
     }

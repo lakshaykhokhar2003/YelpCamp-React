@@ -1,4 +1,3 @@
-// const localStrogae = require('local-storage');
 const mongoose = require('mongoose');
 const express = require('express')
 const app = express();
@@ -14,9 +13,9 @@ const uri = "mongodb://localhost:27017/yelp-camp";
 
 const User = require('./models/userModel')
 const Review = require('./models/reviewModel')
-const catchAsync = require('../src/utils/catchAsync')
 
-const secret = process.env.SECRET
+
+const secret = process.env.REACT_APP_SECRET || 'thisshouldbeabettersecret!';
 
 const store = new MongoDBStore({
     mongoUrl: uri, secret, touchAfter: 24 * 60 * 60
@@ -77,6 +76,7 @@ app.get('/campgrounds', async (req, res) => {
         res.json({campgrounds}); // Sending the campgrounds data as JSON response
         // console.log(campgrounds)
     } catch (err) {
+        console.log("Error: ", err.message)
         res.status(500).json({error: err.message});
     }
 });
@@ -91,32 +91,25 @@ app.get('/campgrounds/:id', async (req, res) => {
         // console.log(campgrounds)
         res.json({campgrounds})
     } catch (err) {
-        res.status(500).json({error: err.message});
         console.log("Error: ", err.message)
+        res.status(500).json({error: err.message});
     }
 })
 
 
-app.post('/register', async (req, res, next) => {
+// Your other imports and setup
+
+app.post('/register', async (req, res) => {
     try {
         const {email, username, password} = req.body;
-        console.log(email, username, password);
-
         const user = new User({email, username});
         const registeredUser = await User.register(user, password);
-
-        req.login(registeredUser, err => {
-            if (err) {
-                console.error('Error during login after registration:', err);
-                return next(err);
-            }
-            const token = jwt.sign({userId: req.user._id}, secret, {expiresIn: '1h'})
-            console.log('User logged in after registration', token);
-            return res.status(200).json({message: 'Registration successful', token});
-        });
-    } catch (e) {
-        console.log(`Error: ${e.message}`);
-        return res.status(500).json({error: e.message});
+        const token = jwt.sign({userId: registeredUser._id}, secret, {expiresIn: '1h'});
+        const data = {user: registeredUser._id, token}
+        return res.status(200).json({message: 'Registration successful', registerData: data});
+    } catch (err) {
+        console.log(`Error: ${err.message}`);
+        return res.status(500).json({error: err.message});
     }
 });
 
@@ -124,10 +117,14 @@ app.post('/register', async (req, res, next) => {
 app.post('/login', passport.authenticate('local', {
     failureFlash: true, failureRedirect: '/login', keepSessionInfo: true
 }), (req, res) => {
-    const expiryTime = 500000;
-    const token = jwt.sign({userId: req.user._id}, secret, {expiresIn: expiryTime});
-    const data = {user: req.user._id, token, expiryTime}
-    return res.status(200).json({message: 'Logged In', data});
+    try {
+        const token = jwt.sign({userId: req.user._id}, secret, {expiresIn: '1h'});
+        const data = {user: req.user._id, token}
+        return res.status(200).json({message: 'Logged In', data});
+    } catch (err) {
+        console.log(`Error: ${err.message}`);
+        return res.status(500).json({error: err.message});
+    }
 });
 
 

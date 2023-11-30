@@ -39,6 +39,7 @@ const LeaveReview = (props) => {
             </form>
         </>)
     }
+
     return (<>
         <ShowPageMap coordinates={props.campground.geometry.coordinates}/>
         {addReviewForm}
@@ -49,7 +50,7 @@ const LeaveReview = (props) => {
                     Rated: {review.rating} stars
                 </p>
                 <p className="card-text">Review: {review.body}</p>
-                {props.currentUser && review.author._id && (
+                {props.currentUser && review.author._id === props.currentUser && (
                     <form action={`/campgrounds/${params.campgroundId}/reviews/${review._id}?_method=DELETE`}
                           method="post">
                         <button className="btn btn-danger">Delete</button>

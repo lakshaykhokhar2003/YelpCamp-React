@@ -1,14 +1,14 @@
-import {Link} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import styles from './Home.module.css';
-import {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {authActions} from "../store";
 
 const Home = () => {
     const dispatch = useDispatch()
+    const location = useLocation()
     const isAuth = useSelector(state => state.auth.isAuthenticated);
     const logoutHandler = () => {
-        dispatch(authActions.logOut())
+        dispatch(authActions.logout())
     }
     return (<div
         className={`${styles.backgroundImage} d-flex text-center text-white bg-dark flex-column pt-3 align-items-center `}>
@@ -20,10 +20,10 @@ const Home = () => {
                       to='/'>Home</Link>
                 <Link className={styles[['nav-link']]} to='/campgrounds'>Campgrounds</Link>
                 {!isAuth && (<>
-                    <Link className={styles[['nav-link']]} to='/login'>Login</Link>
+                    <Link className={styles[['nav-link']]} state={{prevUrl: location.pathname}} to='/login'>Login</Link>
                     <Link className={styles[['nav-link']]} to='/register'>Register</Link>
                 </>)}
-                {isAuth && <button onClick={logoutHandler}>Logout</button>}
+                {isAuth && <Link onClick={logoutHandler} className={styles[['nav-link']]} to="#">Logout</Link>}
             </nav>
         </header>
         <div

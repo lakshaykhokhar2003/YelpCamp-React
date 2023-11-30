@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import axios from "axios";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {authActions} from "../../store";
 
@@ -9,6 +9,8 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     const dispatch = useDispatch()
+    const location = useLocation()
+
 
     const handleUsernameChange = (event) => {
         setUsername(event.target.value);
@@ -23,16 +25,15 @@ const Login = () => {
         try {
             const data = {username, password};
             const response = await axios.post("http://localhost:3000/login", data);
-            console.log(response.data);
+            // console.log(response.data);
             if (response.status === 200) {
-                dispatch(authActions.logIn(response.data.data))
-                navigate('/campgrounds')
+                dispatch(authActions.login(response.data.data))
+                navigate(location.state.prevUrl || '/campgrounds')
             }
         } catch (e) {
             console.log(e);
         }
     };
-
     return (<div className="container d-flex justify-content-center align-items-center mt-5">
         <div className="row">
             <div className="col-md-6 offset-md-3 col-xl-4 offset-xl-4">

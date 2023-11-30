@@ -1,4 +1,4 @@
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import axios from "axios";
 import {useEffect, useState} from "react";
 import LeaveReview from "./Review/LeaveReview";
@@ -19,7 +19,7 @@ const Campground = () => {
                 console.error('Error fetching campgrounds:', error);
             });
 
-    }, []);
+    }, [params.campgroundId]);
 
 
     if (!campground) {
@@ -30,27 +30,25 @@ const Campground = () => {
     let carouselButtons
     if (campground.images.length > 1) {
         carouselButtons = (<>
-            <button class="carousel-control-prev" type="button" data-bs-target="#campgroundCarousel"
+            <button className="carousel-control-prev" type="button" data-bs-target="#campgroundCarousel"
                     data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
+                <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span className="visually-hidden">Previous</span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#campgroundCarousel"
+            <button className="carousel-control-next" type="button" data-bs-target="#campgroundCarousel"
                     data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
+                <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                <span className="visually-hidden">Next</span>
             </button>
         </>)
     }
 
     let campgroundEditDeleteButtons
-
-    if (user && campground.author === user) {
-        campgroundEditDeleteButtons = (<div class="card-body">
-            <a href="/campgrounds/<%= campground._id %>/edit" class="btn btn-info">Edit</a>
-            <form class="d-inline" action="/campgrounds/<%= campground._id %>?_method=DELETE"
-                  method="POST">
-                <button class="btn btn-danger">Delete</button>
+    if (user && campground.author._id === user) {
+        campgroundEditDeleteButtons = (<div className="card-body">
+            <Link to={`/campgrounds/${campground._id}/edit`} class="btn btn-info">Edit</Link>
+            <form className="d-inline" method="POST">
+                <button className="btn btn-danger">Delete</button>
             </form>
         </div>)
     }
@@ -88,7 +86,7 @@ const Campground = () => {
                         </ul>
                         {campgroundEditDeleteButtons}
                         <div className="card-footer">
-                            <a href="/campgrounds" className="btn btn-primary">Back To Campgrounds</a>
+                            <Link to="/campgrounds" className="btn btn-primary">Back To Campgrounds</Link>
                         </div>
                     </div>
                 </div>
