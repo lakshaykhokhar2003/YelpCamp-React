@@ -1,0 +1,15 @@
+.navLinks a {
+    padding: 0.25rem 0;
+    font-weight: 400;
+    margin-left: 1rem;
+    border-bottom: 0.25rem solid transparent;
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+}
+
+.navLinks a:hover {
+    color: white;
+}
+
+
+
