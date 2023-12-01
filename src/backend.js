@@ -73,7 +73,7 @@ run().catch(console.dir);
 app.get('/campgrounds', async (req, res) => {
     try {
         const campgrounds = await Campgrounds.find({});
-        res.json({campgrounds}); // Sending the campgrounds data as JSON response
+        res.json({campgrounds});
         // console.log(campgrounds)
     } catch (err) {
         console.log("Error: ", err.message)
@@ -96,8 +96,22 @@ app.get('/campgrounds/:id', async (req, res) => {
     }
 })
 
+app.post('/campgrounds/:id/reviews', async (req, res) => {
+    try {
+        const campground = await Campgrounds.findById(req.params.id)
+        const review = new Review(req.body);
+        review.author = req.body.user
+        campground.reviews.push(review);
+        await review.save();
+        await campground.save();
+        console.log(review)
+        return res.status(200).json({message: 'Created a new review', review});
+    } catch (err) {
+        console.log("Error: ", err.message)
+        res.status(500).json({error: err.message});
+    }
+})
 
-// Your other imports and setup
 
 app.post('/register', async (req, res) => {
     try {
