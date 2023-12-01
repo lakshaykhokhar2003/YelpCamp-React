@@ -9,7 +9,6 @@ const Campground = () => {
     const [campground, setCampground] = useState(null);
     const user = useSelector(state => state.auth.user);
     useEffect(() => {
-
         axios.get(`http://localhost:3000/campgrounds/${params.campgroundId}`)
             .then(response => {
                 setCampground(response.data.campgrounds)
@@ -25,7 +24,6 @@ const Campground = () => {
     if (!campground) {
         return <div>Loading...</div>;
     }
-    // console.log(campground)
 
     let carouselButtons
     if (campground.images.length > 1) {
@@ -45,8 +43,8 @@ const Campground = () => {
 
     let campgroundEditDeleteButtons
     if (user && campground.author._id === user) {
-        campgroundEditDeleteButtons = (<div className="card-body">
-            <Link to={`/campgrounds/${campground._id}/edit`} class="btn btn-info">Edit</Link>
+        campgroundEditDeleteButtons = (<div className="card-body d-flex gap-1">
+            <Link to={`/campgrounds/${campground._id}/edit`} className="btn btn-info">Edit</Link>
             <form className="d-inline" method="POST">
                 <button className="btn btn-danger">Delete</button>
             </form>

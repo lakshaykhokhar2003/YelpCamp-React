@@ -14,7 +14,12 @@ const uri = "mongodb://localhost:27017/yelp-camp";
 const User = require('./models/userModel')
 const Review = require('./models/reviewModel')
 
-
+const multer = require("multer");
+const {storage} = require('../src/cloudinary')
+const upload = multer({storage})
+// const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+// const mapboxToken = process.env.MAPBOX_ACCESS_TOKEN
+// const geocoder = mbxGeocoding({accessToken: mapboxToken})
 const secret = process.env.REACT_APP_SECRET || 'thisshouldbeabettersecret!';
 
 const store = new MongoDBStore({
@@ -95,6 +100,30 @@ app.get('/campgrounds/:id', async (req, res) => {
         res.status(500).json({error: err.message});
     }
 })
+app.get('/campgrounds/:id/edit', async (req, res) => {
+    try {
+        const campground = await Campgrounds.findById(req.params.id)
+        res.json({campground})
+    } catch (err) {
+        console.log("Error: ", err.message)
+        res.status(500).json({error: err.message});
+    }
+})
+app.post('/campgrounds/:id/edit', async (req, res) => {
+    try {
+        // const geoData = await geocoder.forwardGeocode({
+        //     query: req.body.location, limit: 1
+        // }).send()
+        console.log(req.body)
+        const campground = await Campgrounds.findByIdAndUpdate(req.params.id, {...req.body});
+        // const imgs = req.body.images.map(f => ({url: f.path, filename: f.filename}))
+        // console.log(imgs)
+        return res.status(200).json({message: 'Successfully updated campground'});
+    } catch (err) {
+        console.log("Error: ", err.message)
+        res.status(500).json({error: err.message});
+    }
+})
 
 app.post('/campgrounds/:id/reviews', async (req, res) => {
     try {
@@ -111,7 +140,7 @@ app.post('/campgrounds/:id/reviews', async (req, res) => {
     }
 })
 
-app.post('/campgrounds/:id/reviews/:reviewId', async (req, res) => {
+app.delete('/campgrounds/:id/reviews/:reviewId', async (req, res) => {
     try {
         const {id, reviewId} = req.params
         await Campgrounds.findByIdAndUpdate(id, {$pull: {reviews: reviewId}})

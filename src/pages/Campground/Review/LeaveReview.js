@@ -25,6 +25,7 @@ const LeaveReview = (props) => {
             // console.log(response.data)
             if (response.status === 200) {
                 navigate(`/campgrounds`)
+                navigate(`/campgrounds/${props.campground._id}`)
             }
         } catch (e) {
             console.log("Error in LeaveReview: ", e)
@@ -34,9 +35,10 @@ const LeaveReview = (props) => {
     const deleteReview = async (e, reviewId) => {
         e.preventDefault()
         try {
-            const response = await axios.post(`http://localhost:3000/campgrounds/${props.campground._id}/reviews/${reviewId}`)
+            const response = await axios.delete(`http://localhost:3000/campgrounds/${props.campground._id}/reviews/${reviewId}`)
             if (response.status === 200) {
                 navigate(`/campgrounds`)
+                navigate(`/campgrounds/${props.campground._id}`)
             }
         } catch (e) {
             console.log("Error in LeaveReview: ", e)
