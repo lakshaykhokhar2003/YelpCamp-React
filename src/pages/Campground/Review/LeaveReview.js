@@ -31,7 +31,17 @@ const LeaveReview = (props) => {
         }
     }
 
-
+    const deleteReview = async (e, reviewId) => {
+        e.preventDefault()
+        try {
+            const response = await axios.post(`http://localhost:3000/campgrounds/${props.campground._id}/reviews/${reviewId}`)
+            if (response.status === 200) {
+                navigate(`/campgrounds`)
+            }
+        } catch (e) {
+            console.log("Error in LeaveReview: ", e)
+        }
+    }
     if (props.currentUser) {
         addReviewForm = (<>
             <h2>Leave a Review</h2>
@@ -129,9 +139,10 @@ const LeaveReview = (props) => {
                     Rated: {review.rating} stars
                 </p>
                 <p className="card-text">Review: {review.body}</p>
-                {props.currentUser && review.author._id === props.currentUser && (<form>
-                    <button className="btn btn-danger">Delete</button>
-                </form>)}
+                {props.currentUser && review.author._id === props.currentUser && (
+                    <form onSubmit={(e) => deleteReview(e, review._id)}>
+                        <button className="btn btn-danger">Delete</button>
+                    </form>)}
             </div>
         </div>))}
 

@@ -104,7 +104,6 @@ app.post('/campgrounds/:id/reviews', async (req, res) => {
         campground.reviews.push(review);
         await review.save();
         await campground.save();
-        console.log(review)
         return res.status(200).json({message: 'Created a new review', review});
     } catch (err) {
         console.log("Error: ", err.message)
@@ -112,6 +111,17 @@ app.post('/campgrounds/:id/reviews', async (req, res) => {
     }
 })
 
+app.post('/campgrounds/:id/reviews/:reviewId', async (req, res) => {
+    try {
+        const {id, reviewId} = req.params
+        await Campgrounds.findByIdAndUpdate(id, {$pull: {reviews: reviewId}})
+        await Review.findByIdAndDelete(reviewId);
+        return res.status(200).json({message: 'Successfully deleted review'});
+    } catch (err) {
+        console.log("Error: ", err.message)
+        res.status(500).json({error: err.message});
+    }
+})
 
 app.post('/register', async (req, res) => {
     try {
