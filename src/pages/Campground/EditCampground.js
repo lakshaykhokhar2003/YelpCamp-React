@@ -1,11 +1,10 @@
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {useSelector} from "react-redux";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 
 
 const EditCampground = () => {
-    const fileInputRef = useRef(null);
     const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
     const navigate = useNavigate();
     const params = useParams()
@@ -16,6 +15,9 @@ const EditCampground = () => {
     const [location, setLocation] = useState();
     const [price, setPrice] = useState();
     const [description, setDescription] = useState();
+    const [checkedImages, setCheckedImages] = useState({});
+    const [images, setImages] = useState([]);
+
     useEffect(() => {
         if (!isAuthenticated) {
             navigate('/login');
@@ -54,27 +56,49 @@ const EditCampground = () => {
     const handleDescriptionChange = (e) => {
         setDescription(e.target.value);
     };
+    const handleCheckboxChange = (filename) => {
+        setCheckedImages(prevState => ({
+            ...prevState, [filename]: !prevState[filename] // Toggle checked state
+        }));
+    };
+
+    const handleImageChange = (e) => {
+        setImages(Array.from(e.target.files));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        let images = [];
-        for (let i = 0; i < fileInputRef.current.files.length; i++) {
-            images.push(fileInputRef.current.files[i])
+
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('location', location);
+        formData.append('price', price);
+        formData.append('description', description);
+
+        for (let i = 0; i < images.length; i++) {
+            formData.append('image', images[i]);
         }
-        const data = {title: title, location: location, price: price, description: description};
-        console.log(data)
+
+        const imagesToDelete = Object.keys(checkedImages).filter(filename => checkedImages[filename]);
+        for (let i = 0; i < imagesToDelete.length; i++) {
+            formData.append('deleteImages[]', imagesToDelete[i]);
+        }
+
         try {
-            const response = await axios.post(`http://localhost:3000/campgrounds/${params.campgroundId}/edit`, data)
+            const response = await axios.post(`http://localhost:3000/campgrounds/${params.campgroundId}/edit`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
             if (response.status === 200) {
-                navigate(`/campgrounds/${params.campgroundId}`)
+                navigate(`/campgrounds/${params.campgroundId}`);
             }
-
         } catch (err) {
-            console.log("Error ", err.message)
-
+            console.log('Error ', err.message);
         }
-
     };
+
 
     return <div className="row">
         <h1 className="text-center">Edit Campground</h1>
@@ -143,14 +167,19 @@ const EditCampground = () => {
                 </div>
                 <div className="mb-3 custom-file">
                     <label htmlFor="formFileMultiple" className="form-label custom-file-label">
-                        Add More Images
+                        Add Images
                     </label>
-                    <input ref={fileInputRef} className="form-control" type="file" id="formFileMultiple" name="image"
-                           multiple/>
+                    <input
+                        className="form-control"
+                        type="file"
+                        id="formFileMultiple"
+                        name="image"
+                        multiple
+                        onChange={handleImageChange}
+                    />
                 </div>
                 <div className="mb-3 d-flex align-items-center justify-content-center">
                     {campground.images.map((img, i) => (<div key={i}>
-                        {/*<img src={img.thumbnail} alt="" className="img-thumbnail h-25 w-25"/>*/}
                         <div className="form-check-inline d-flex flex-column">
                             <img src={img.url} alt="" className="img-thumbnail w-25"/>
                             <div>
@@ -159,6 +188,8 @@ const EditCampground = () => {
                                     id={`image-${i}`}
                                     name="deleteImages[]"
                                     value={img.filename}
+                                    checked={checkedImages[img.filename] || false}
+                                    onChange={() => handleCheckboxChange(img.filename)}
                                     className="form-check-input"
                                 />
                                 <label htmlFor={`image-${i}`} className="form-check-label">
@@ -174,7 +205,7 @@ const EditCampground = () => {
                     </button>
                 </div>
             </form>
-            <Link to={`/campgrounds/${campground._id}`} className="btn btn-danger">
+            <Link to={`/campgrounds/${campground._id}`} className="btn btn-danger mt-3">
                 Cancel
             </Link>
         </div>

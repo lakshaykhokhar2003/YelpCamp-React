@@ -1,3 +1,5 @@
+const path = require('path');
+require('dotenv').config({path: path.resolve(__dirname, '../.env')});
 const mongoose = require('mongoose');
 const express = require('express')
 const app = express();
@@ -17,9 +19,10 @@ const Review = require('./models/reviewModel')
 const multer = require("multer");
 const {storage} = require('../src/cloudinary')
 const upload = multer({storage})
-// const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
-// const mapboxToken = process.env.MAPBOX_ACCESS_TOKEN
-// const geocoder = mbxGeocoding({accessToken: mapboxToken})
+const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+const {cloudinary} = require("./cloudinary");
+const mapboxToken = process.env.MAPBOX_ACCESS_TOKEN
+const geocoder = mbxGeocoding({accessToken: mapboxToken})
 const secret = process.env.REACT_APP_SECRET || 'thisshouldbeabettersecret!';
 
 const store = new MongoDBStore({
@@ -29,12 +32,6 @@ store.on("error", function (e) {
     console.log("Session Store Error", e)
 })
 
-// const sessionConfig = {
-//     store, name: 'session', secret, resave: false, saveUninitialized: true, cookie: {
-//         httpOnly: true, // secure: true,
-//         expires: Date.now() + 1000 * 60 * 60 * 24 * 7, maxAge: 1000 * 60 * 60 * 24 * 7
-//     }
-// }
 app.use(express.json());
 app.use(session({secret, resave: false, saveUninitialized: true}))
 app.use(cors({
@@ -109,16 +106,44 @@ app.get('/campgrounds/:id/edit', async (req, res) => {
         res.status(500).json({error: err.message});
     }
 })
-app.post('/campgrounds/:id/edit', async (req, res) => {
+app.post('/campgrounds/:id/edit', upload.array('image'), async (req, res) => {
     try {
-        // const geoData = await geocoder.forwardGeocode({
-        //     query: req.body.location, limit: 1
-        // }).send()
-        console.log(req.body)
-        const campground = await Campgrounds.findByIdAndUpdate(req.params.id, {...req.body});
-        // const imgs = req.body.images.map(f => ({url: f.path, filename: f.filename}))
-        // console.log(imgs)
+        const geoData = await geocoder.forwardGeocode({
+            query: req.body.location, limit: 1
+        }).send()
+        const {title, location, price, description} = req.body;
+        const campground = await Campgrounds.findByIdAndUpdate(req.params.id, {
+            $set: {
+                title, location, price, description
+            }
+        }, {new: true});
+        campground.geometry = geoData.body.features[0].geometry
+        const imgs = req.files.map(f => ({url: f.path, filename: f.filename}))
+        campground.images.push(...imgs)
+        await campground.save()
+        if (req.body.deleteImages) {
+            for (let filename of req.body.deleteImages) {
+                await cloudinary.uploader.destroy(filename)
+            }
+            await campground.updateOne({$pull: {images: {filename: {$in: req.body.deleteImages}}}})
+        }
         return res.status(200).json({message: 'Successfully updated campground'});
+    } catch (err) {
+        console.log("Error: ", err.message)
+        res.status(500).json({error: err.message});
+    }
+})
+
+app.post('/campgrounds/new', upload.array('image'), async (req, res) => {
+    try {
+        const geoData = await geocoder.forwardGeocode({
+            query: req.body.location, limit: 1
+        }).send()
+        const campground = new Campgrounds(req.body)
+        campground.geometry = geoData.body.features[0].geometry
+        campground.images = req.files.map(f => ({url: f.path, filename: f.filename}))
+        await campground.save();
+        return res.status(200).json({message: 'Successfully created campground', campground});
     } catch (err) {
         console.log("Error: ", err.message)
         res.status(500).json({error: err.message});

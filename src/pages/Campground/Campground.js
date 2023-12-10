@@ -51,15 +51,28 @@ const Campground = () => {
         </div>)
     }
 
+    let campgroundImages
+    if (campground.images.length === 0) {
+        campgroundImages = <div className="carousel-item active">
+            <img
+                src="https://source.unsplash.com/collection/483251/640"
+                className="d-block w-100" alt="..."/>
+        </div>
+    } else {
+        campgroundImages = campground.images.map((image, index) => (
+            <div key={index} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
+                <img
+                    src={image.url}
+                    className="d-block w-100" alt="..."/>
+            </div>))
+    }
+
     return (<div className="container mt-5">
         <div className="row mb-3">
             <div className="col-6 ">
                 <div id="campgroundCarousel" className="carousel slide" data-bs-ride="carousel">
                     <div className="carousel-inner">
-                        {campground.images.map((image, index) => (
-                            <div key={index} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
-                                <img src={image.url} className="d-block w-100" alt="..."/>
-                            </div>))}
+                        {campgroundImages}
                     </div>
                     {carouselButtons}
                 </div>
