@@ -7,7 +7,7 @@ const ShowPageMap = (props) => {
     const longitude = props.coordinates[0];
     return (<div id="map">
         <Map
-            initialViewState={{latitude, longitude, zoom: 10}}
+            initialViewState={{latitude, longitude, zoom: 8}}
             width="100%"
             height="100%"
             mapboxApiAccessToken={token}

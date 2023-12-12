@@ -6,7 +6,7 @@ const RootLayout = () => {
         <header>
             <HomeNavBar/>
         </header>
-        <main>
+        <main className="container mt-5">
             <Outlet/>
         </main>
         <footer

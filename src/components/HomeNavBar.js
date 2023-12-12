@@ -12,6 +12,7 @@ const MainNavbar = () => {
     // console.log(isAuth, isUser, token)
     const logoutHandler = () => {
         dispatch(authActions.logout())
+        window.location.reload()
     }
 
     return (<nav className="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
