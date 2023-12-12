@@ -1,16 +1,20 @@
-import {useState} from 'react';
-import axios from "axios";
-import {useLocation, useNavigate} from "react-router-dom";
-import {useDispatch} from "react-redux";
-import {authActions} from "../../store";
+import {useState, useEffect} from 'react';
+import axios from 'axios';
+import {useLocation, useNavigate} from 'react-router-dom';
+import {useDispatch} from 'react-redux';
+import {authActions} from '../../store';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
-    const dispatch = useDispatch()
-    const location = useLocation()
+    const dispatch = useDispatch();
+    const location = useLocation();
+    const [prevUrl, setPrevUrl] = useState('');
 
+    useEffect(() => {
+        setPrevUrl(location.state?.prevUrl || '');
+    }, [location]);
 
     const handleUsernameChange = (event) => {
         setUsername(event.target.value);
@@ -24,11 +28,10 @@ const Login = () => {
         event.preventDefault();
         try {
             const data = {username, password};
-            const response = await axios.post("http://localhost:3000/login", data);
-            // console.log(response.data);
+            const response = await axios.post('http://localhost:3000/login', data);
             if (response.status === 200) {
-                dispatch(authActions.login(response.data.data))
-                navigate(location.state.prevUrl || '/campgrounds')
+                dispatch(authActions.login(response.data.data));
+                navigate(prevUrl || '/campgrounds');
             }
         } catch (e) {
             console.log(e);
