@@ -1,4 +1,3 @@
-import {useNavigate} from "react-router-dom";
 import styles from './LeaveReview.module.css';
 import ShowPageMap from "../../../Maps/ShowPageMap";
 import {useRef, useState} from "react";
@@ -6,26 +5,26 @@ import axios from "axios";
 
 const LeaveReview = (props) => {
     const [rating, setRating] = useState(0);
-    const navigate = useNavigate()
     const handleRatingChange = (event) => {
         setRating(parseInt(event.target.value));
     };
     const commentRef = useRef()
-    let addReviewForm
-    // console.log(props.campground)
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         const body = commentRef.current.value
         const user = props.currentUser
-        const review = {body, rating, user}
-        // console.log(review)
+        let review
+        if (rating === 0) {
+            review = {body, rating: 1, user}
+        } else {
+            review = {body, rating, user}
+        }
+
         try {
             const response = await axios.post(`http://localhost:3000/campgrounds/${props.campground._id}/reviews`, review)
-            // console.log(response.data)
             if (response.status === 200) {
-                navigate(`/campgrounds`)
-                navigate(`/campgrounds/${props.campground._id}`)
+                window.location.reload()
             }
         } catch (e) {
             console.log("Error in LeaveReview: ", e)
@@ -37,13 +36,13 @@ const LeaveReview = (props) => {
         try {
             const response = await axios.delete(`http://localhost:3000/campgrounds/${props.campground._id}/reviews/${reviewId}`)
             if (response.status === 200) {
-                navigate(`/campgrounds`)
-                navigate(`/campgrounds/${props.campground._id}`)
+                window.location.reload()
             }
         } catch (e) {
             console.log("Error in LeaveReview: ", e)
         }
     }
+    let addReviewForm
     if (props.currentUser) {
         addReviewForm = (<>
             <h2>Leave a Review</h2>
@@ -147,7 +146,6 @@ const LeaveReview = (props) => {
                     </form>)}
             </div>
         </div>))}
-
     </>)
 
 
