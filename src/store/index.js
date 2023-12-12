@@ -1,5 +1,26 @@
 import {configureStore, createSlice} from '@reduxjs/toolkit';
 
+const loadState = () => {
+    try {
+        const serializedState = localStorage.getItem('reduxState');
+        if (serializedState === null) {
+            return undefined;
+        }
+        return JSON.parse(serializedState);
+    } catch (err) {
+        return undefined;
+    }
+};
+
+const saveState = (state) => {
+    try {
+        const serializedState = JSON.stringify(state);
+        localStorage.setItem('reduxState', serializedState);
+    } catch (err) {
+        console.log("Error: ", err.message)
+    }
+};
+const persistedState = loadState();
 const authSlice = createSlice({
     name: 'auth', initialState: {
         isAuthenticated: false, user: null, token: localStorage.getItem('token') || null,
@@ -25,7 +46,10 @@ const authSlice = createSlice({
 export const authActions = authSlice.actions;
 
 const store = configureStore({
-    reducer: {auth: authSlice.reducer},
+    reducer: {auth: authSlice.reducer}, preloadedState: persistedState,
 });
 
+store.subscribe(() => {
+    saveState(store.getState());
+});
 export default store;
