@@ -1,5 +1,5 @@
 import styles from './LeaveReview.module.css';
-import ShowPageMap from "../../../Maps/ShowPageMap";
+import ShowPageMap from "../../../maps/ShowPageMap";
 import {useRef, useState} from "react";
 import axios from "axios";
 

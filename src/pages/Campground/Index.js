@@ -2,7 +2,7 @@ import {Link} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import CampgroundsIndex from "./CampgroundsIndex";
-import ClusterMap from "../../Maps/ClusterMap";
+import ClusterMap from "../../maps/ClusterMap";
 
 const AllCampgrounds = () => {
     const [campgrounds, setCampgrounds] = useState([]);

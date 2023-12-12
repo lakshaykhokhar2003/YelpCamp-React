@@ -13,9 +13,9 @@ import {Provider} from "react-redux";
 import store from "./store/index.js"
 
 const router = createBrowserRouter([{
-    path: "/", element: <Home/>
+    path: "/", element: <Home/>, errorElement: <Error/>
 }, {
-    path: "/", element: <RootLayout/>, children: [{
+    path: "/", element: <RootLayout/>, errorElement: <Error/>, children: [{
         path: "campgrounds",
         children: [{index: true, element: <AllCampgrounds/>}, {path: "new", element: <NewCampground/>}, {
             path: ":campgroundId",

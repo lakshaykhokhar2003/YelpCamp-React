@@ -21,7 +21,8 @@ const CampgroundsIndex = (props) => {
                     <p className="card-text">
                         <small className="text-muted">Last updated 3 mins ago</small>
                     </p>
-                    <Link to={`/campgrounds/${props.campground._id}`} className="btn btn-primary">View Campground</Link>
+                    <Link to={`/campgrounds/${props.campground._id}`}
+                          className="btn btn-primary">View {props.campground.title}</Link>
                 </div>
             </div>
         </div>

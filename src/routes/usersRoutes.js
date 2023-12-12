@@ -14,7 +14,7 @@ router.route('/register')
             const registeredUser = await User.register(user, password);
             const token = jwt.sign({userId: registeredUser._id}, secret, {expiresIn: '1h'});
             const data = {user: registeredUser._id, token}
-            return res.status(200).json({message: 'Registration successful', registerData: data});
+            return res.status(200).json({message: 'Welcome to Yelp Camp!!!', registerData: data});
         } catch (err) {
             console.log(`Error: ${err.message}`);
             return res.status(500).json({error: err.message});
@@ -28,7 +28,7 @@ router.route('/login')
         try {
             const token = jwt.sign({userId: req.user._id}, secret, {expiresIn: '1h'});
             const data = {user: req.user._id, token}
-            return res.status(200).json({message: 'Logged In', data});
+            return res.status(200).json({message: 'Welcome Back!', data});
         } catch (err) {
             console.log(`Error: ${err.message}`);
             return res.status(500).json({error: err.message});
