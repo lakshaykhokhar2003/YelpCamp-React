@@ -1,11 +1,12 @@
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
-
+import {msgActions} from "../../store/message";
 const NewCampground = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const dispatch = useDispatch();
     const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
     const user = useSelector(state => state.auth.user);
 
@@ -51,8 +52,12 @@ const NewCampground = () => {
                 },
             });
             if (response.status === 200) {
+                dispatch(msgActions.success(response.data.message))
                 setButtonText('Add A Campground');
                 navigate('/campgrounds');
+            } else {
+                dispatch(msgActions.error(response.data.message))
+                setButtonText('Add A Campground');
             }
         } catch (err) {
             console.log("Error: ", err.message);

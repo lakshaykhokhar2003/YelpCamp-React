@@ -1,7 +1,8 @@
 import {Link, useLocation} from "react-router-dom";
 import classes from "./HomeNavBar.module.css";
 import {useDispatch, useSelector} from "react-redux";
-import {authActions} from "../store";
+import {authActions} from "../store/auth";
+import {msgActions} from "../store/message";
 
 const MainNavbar = () => {
     const dispatch = useDispatch()
@@ -13,6 +14,7 @@ const MainNavbar = () => {
     const logoutHandler = () => {
         dispatch(authActions.logout())
         window.location.reload()
+        dispatch(msgActions.success('Goodbye!'))
     }
 
     return (<nav className="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">

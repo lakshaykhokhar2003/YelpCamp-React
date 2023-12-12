@@ -1,7 +1,8 @@
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 import axios from "axios";
-import {authActions} from "../../store";
+import {authActions} from "../../store/auth";
+import {msgActions} from "../../store/message";
 import {useDispatch} from "react-redux";
 
 const Register = () => {
@@ -31,6 +32,7 @@ const Register = () => {
             console.log(response.data.registerData)
             if (response.status === 200) {
                 dispatch(authActions.registerSuccess(response.data.registerData))
+                dispatch(msgActions.success(response.data.message))
                 navigate('/campgrounds')
             }
         } catch (e) {

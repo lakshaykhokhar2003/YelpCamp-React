@@ -1,7 +1,7 @@
 import {Link, useLocation} from "react-router-dom";
 import styles from './Home.module.css';
 import {useDispatch, useSelector} from "react-redux";
-import {authActions} from "../store";
+import {authActions} from "../store/auth";
 
 const Home = () => {
     const dispatch = useDispatch()
