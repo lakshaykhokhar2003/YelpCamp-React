@@ -8,9 +8,11 @@ const NewCampground = () => {
     const location = useLocation();
     const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
     const user = useSelector(state => state.auth.user);
+
+    const [buttonText, setButtonText] = useState('Add A Campground');
     useEffect(() => {
         if (!isAuthenticated) {
-            navigate('/login', {state: {prevUrl: location.pathname}}); // Pass the current URL as prevUrl
+            navigate('/login', {state: {prevUrl: location.pathname}});
         }
     }, [isAuthenticated, navigate, location]);
 
@@ -31,7 +33,7 @@ const NewCampground = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setButtonText('Adding...');
         const formData = new FormData();
         formData.append('title', campground.title);
         formData.append('location', campground.location);
@@ -49,6 +51,7 @@ const NewCampground = () => {
                 },
             });
             if (response.status === 200) {
+                setButtonText('Add A Campground');
                 navigate('/campgrounds');
             }
         } catch (err) {
@@ -141,7 +144,7 @@ const NewCampground = () => {
                         </div>
                         <div className="mt-3">
                             <button type="submit" className="btn btn-success">
-                                Add A Campground
+                                {buttonText}
                             </button>
                         </div>
                     </form>
