@@ -1,4 +1,4 @@
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import axios from "axios";
@@ -7,8 +7,10 @@ import axios from "axios";
 const EditCampground = () => {
     const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
     const navigate = useNavigate();
+    const loc = useLocation();
     const params = useParams()
 
+    const [buttonText, setButtonText] = useState('Edit Campground');
     const [campground, setCampground] = useState(null)
 
     const [title, setTitle] = useState();
@@ -20,7 +22,7 @@ const EditCampground = () => {
 
     useEffect(() => {
         if (!isAuthenticated) {
-            navigate('/login');
+            navigate('/login', {state: {prevUrl: loc.pathname}});
         }
         const fetchCampground = async () => {
             try {
@@ -36,7 +38,7 @@ const EditCampground = () => {
             }
         }
         fetchCampground()
-    }, [isAuthenticated, navigate, params.campgroundId]);
+    }, [isAuthenticated, navigate, params.campgroundId, loc]);
 
     if (!campground) {
         return <div>Loading...</div>;
@@ -58,7 +60,7 @@ const EditCampground = () => {
     };
     const handleCheckboxChange = (filename) => {
         setCheckedImages(prevState => ({
-            ...prevState, [filename]: !prevState[filename] // Toggle checked state
+            ...prevState, [filename]: !prevState[filename]
         }));
     };
 
@@ -67,8 +69,8 @@ const EditCampground = () => {
     };
 
     const handleSubmit = async (e) => {
+        setButtonText('Editing ...')
         e.preventDefault();
-
         const formData = new FormData();
         formData.append('title', title);
         formData.append('location', location);
@@ -92,12 +94,38 @@ const EditCampground = () => {
             });
 
             if (response.status === 200) {
+                setButtonText('Edit Campground')
                 navigate(`/campgrounds/${params.campgroundId}`);
             }
         } catch (err) {
             console.log('Error ', err.message);
         }
     };
+    let imagesMap
+    const imagesWithFilename = campground.images.filter(image => image.filename && image.filename.length > 0);
+    for (let filename of campground.images) {
+        if (filename.filename.length > 0) {
+            imagesMap = imagesWithFilename.map(filename => (<div key={filename._id} className="col-md-4">
+                <div className="card mh-100">
+                    <img src={filename.url} className="card-img-top border-bottom" alt="..."/>
+                    <div className="card-body">
+                        <div className="form-check">
+                            <input
+                                className="form-check-input"
+                                type="checkbox"
+                                id={`image-${filename._id}`}
+                                checked={checkedImages[filename.filename] || false}
+                                onChange={() => handleCheckboxChange(filename.filename)}
+                            />
+                            <label className="form-check-label" htmlFor={`image-${filename._id}`}>
+                                Remove
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>))
+        }
+    }
 
 
     return <div className="row">
@@ -179,29 +207,11 @@ const EditCampground = () => {
                     />
                 </div>
                 <div className="mb-3 d-flex align-items-center justify-content-center">
-                    {campground.images.map((img, i) => (<div key={i}>
-                        <div className="form-check-inline d-flex flex-column">
-                            <img src={img.url} alt="" className="img-thumbnail w-25"/>
-                            <div>
-                                <input
-                                    type="checkbox"
-                                    id={`image-${i}`}
-                                    name="deleteImages[]"
-                                    value={img.filename}
-                                    checked={checkedImages[img.filename] || false}
-                                    onChange={() => handleCheckboxChange(img.filename)}
-                                    className="form-check-input"
-                                />
-                                <label htmlFor={`image-${i}`} className="form-check-label">
-                                    Delete?
-                                </label>
-                            </div>
-                        </div>
-                    </div>))}
+                    {imagesMap}
                 </div>
                 <div className="mt-3">
                     <button className="btn btn-info" type="submit">
-                        Update Campground
+                        {buttonText}
                     </button>
                 </div>
             </form>
