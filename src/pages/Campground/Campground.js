@@ -75,7 +75,7 @@ const Campground = () => {
             <div key={image._id} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
                 <img
                     src={image.url}
-                    className="d-block w-100"
+                    className="d-block w-100 img-fluid"
                     alt="..."
                 />
             </div>));
@@ -84,7 +84,7 @@ const Campground = () => {
             <div key={image._id} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
                 <img
                     src={image.url}
-                    className="d-block w-100"
+                    className="d-block w-100 img-fluid"
                     alt="..."
                 />
             </div>));
