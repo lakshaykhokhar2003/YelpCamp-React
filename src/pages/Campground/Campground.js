@@ -63,9 +63,21 @@ const Campground = () => {
     }
 
     let campgroundImages = null;
+    let imagesWithFilename = []
+    let imagesWithoutFilename = []
+    if (campground.images.length === 0) {
+        campgroundImages = (<div className={`carousel-item active`}>
+            <img
+                src="https://source.unsplash.com/collection/483251/640"
+                className="d-block w-100 img-fluid"
+                alt="https://source.unsplash.com/collection/483251/640"
+            />
+        </div>)
+    } else {
+        imagesWithFilename = campground.images.filter(image => image.filename && image.filename.length > 0);
+        imagesWithoutFilename = campground.images.filter(image => !image.filename || image.filename.length === 0);
 
-    const imagesWithFilename = campground.images.filter(image => image.filename && image.filename.length > 0);
-    const imagesWithoutFilename = campground.images.filter(image => !image.filename || image.filename.length === 0);
+    }
 
     if (imagesWithFilename.length > 0) {
         if (imagesWithFilename.length === 1) {
@@ -76,7 +88,7 @@ const Campground = () => {
                 <img
                     src={image.url}
                     className="d-block w-100 img-fluid"
-                    alt="..."
+                    alt="https://source.unsplash.com/collection/483251/640"
                 />
             </div>));
     } else if (imagesWithoutFilename.length > 0) {
@@ -85,7 +97,7 @@ const Campground = () => {
                 <img
                     src={image.url}
                     className="d-block w-100 img-fluid"
-                    alt="..."
+                    alt="https://source.unsplash.com/collection/483251/640"
                 />
             </div>));
     }
