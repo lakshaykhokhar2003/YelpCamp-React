@@ -2,19 +2,16 @@ import {Link, useLocation} from "react-router-dom";
 import classes from "./HomeNavBar.module.css";
 import {useDispatch, useSelector} from "react-redux";
 import {authActions} from "../store/auth";
-import {msgActions} from "../store/message";
+import useNotifications from "../hooks/notificationsHook";
 
 const MainNavbar = () => {
+    const {notificationSuccess} = useNotifications()
     const dispatch = useDispatch()
     const location = useLocation()
     const isAuth = useSelector(state => state.auth.isAuthenticated);
-    // const isUser = useSelector(state => state.auth.user);
-    // const token = useSelector(state => state.auth.token);
-    // console.log(isAuth, isUser, token)
     const logoutHandler = () => {
         dispatch(authActions.logout())
-        window.location.reload()
-        dispatch(msgActions.success('Goodbye!'))
+        notificationSuccess('Goodbye!')
     }
 
     return (<nav className="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">

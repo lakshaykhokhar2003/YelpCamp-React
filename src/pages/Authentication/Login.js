@@ -3,7 +3,7 @@ import axios from 'axios';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {useDispatch} from 'react-redux';
 import {authActions} from '../../store/auth';
-import {msgActions} from '../../store/message';
+import useNotifications from "../../hooks/notificationsHook";
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -11,6 +11,7 @@ const Login = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const location = useLocation();
+    const {notificationSuccess} = useNotifications();
     const [prevUrl, setPrevUrl] = useState('');
 
     useEffect(() => {
@@ -32,7 +33,7 @@ const Login = () => {
             const response = await axios.post('http://localhost:3000/login', data);
             if (response.status === 200) {
                 dispatch(authActions.login(response.data.data));
-                dispatch(msgActions.success(response.data.message))
+                notificationSuccess(response.data.message);
                 navigate(prevUrl || '/campgrounds');
             }
         } catch (e) {

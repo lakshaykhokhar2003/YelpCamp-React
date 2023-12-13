@@ -11,6 +11,7 @@ import Login from "./pages/Authentication/Login";
 import Register from "./pages/Authentication/Register";
 import {Provider} from "react-redux";
 import store from "./store/index.js"
+import {ToastContainer} from "react-toastify";
 
 const router = createBrowserRouter([{
     path: "/", element: <Home/>, errorElement: <Error/>
@@ -25,7 +26,12 @@ const router = createBrowserRouter([{
 }]);
 
 function App() {
-    return <Provider store={store}><RouterProvider router={router}/></Provider>;
+    return <Provider store={store}>
+        <>
+            <RouterProvider router={router}/>
+            <ToastContainer/>
+        </>
+    </Provider>;
 }
 
 export default App;
