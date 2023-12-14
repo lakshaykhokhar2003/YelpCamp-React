@@ -4,19 +4,25 @@ import {useLocation, useNavigate} from 'react-router-dom';
 import {useDispatch} from 'react-redux';
 import {authActions} from '../../store/auth';
 import useNotifications from "../../hooks/notificationsHook";
+import {Form, Button} from "react-bootstrap";
 
 const Login = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const {isAuthenticated, notificationSuccess} = useNotifications();
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const location = useLocation();
-    const {notificationSuccess} = useNotifications();
+
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
     const [prevUrl, setPrevUrl] = useState('');
 
     useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/campgrounds');
+        }
         setPrevUrl(location.state?.prevUrl || '');
-    }, [location]);
+    }, [location, isAuthenticated, navigate]);
 
     const handleUsernameChange = (event) => {
         setUsername(event.target.value);
@@ -25,20 +31,28 @@ const Login = () => {
     const handlePasswordChange = (event) => {
         setPassword(event.target.value);
     };
-
+    const [validated, setValidated] = useState(false);
     const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            const data = {username, password};
-            const response = await axios.post('http://localhost:3000/login', data);
-            if (response.status === 200) {
-                dispatch(authActions.login(response.data.data));
-                notificationSuccess(response.data.message);
-                navigate(prevUrl || '/campgrounds');
+        const form = event.currentTarget;
+        if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+        } else {
+            event.preventDefault();
+            try {
+                const data = {username, password};
+                const response = await axios.post('http://localhost:3000/login', data);
+                if (response.status === 200) {
+                    dispatch(authActions.login(response.data.data));
+                    notificationSuccess(response.data.message);
+                    navigate(prevUrl || '/campgrounds');
+                }
+            } catch (e) {
+                console.log(e);
             }
-        } catch (e) {
-            console.log(e);
         }
+
+        setValidated(true);
     };
     return (<div className="container d-flex justify-content-center align-items-center mt-5">
         <div className="row">
@@ -52,41 +66,36 @@ const Login = () => {
                     />
                     <div className="card-body">
                         <h5 className="card-title">Login</h5>
-                        <form onSubmit={handleSubmit} className="validated-form" noValidate>
-                            <div className="mb-3">
-                                <label className="form-label" htmlFor="username">
-                                    Username
-                                </label>
-                                <input
-                                    className="form-control"
+                        <Form onSubmit={handleSubmit} className="validated-form" noValidate validated={validated}>
+                            <Form.Group className="mb-3" controlId="username">
+                                <Form.Label>Username</Form.Label>
+                                <Form.Control
                                     type="text"
-                                    id="username"
                                     name="username"
                                     autoFocus
                                     required
                                     value={username}
                                     onChange={handleUsernameChange}
                                 />
-                                <div className="valid-feedback">Looks good!</div>
-                            </div>
+                                <Form.Control.Feedback type="valid">Looks good!</Form.Control.Feedback>
+                            </Form.Group>
 
-                            <div className="mb-3">
-                                <label className="form-label" htmlFor="password">
-                                    Password
-                                </label>
-                                <input
-                                    className="form-control"
+                            <Form.Group className="mb-3" controlId="password">
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control
                                     type="password"
-                                    id="password"
                                     name="password"
                                     required
                                     value={password}
                                     onChange={handlePasswordChange}
                                 />
-                                <div className="valid-feedback">Looks good!</div>
-                            </div>
-                            <button className="btn btn-success btn-block">Login</button>
-                        </form>
+                                <Form.Control.Feedback type="valid">Looks good!</Form.Control.Feedback>
+                            </Form.Group>
+
+                            <Button className="btn btn-success btn-block" type="submit">
+                                Login
+                            </Button>
+                        </Form>
                     </div>
                 </div>
             </div>

@@ -2,13 +2,15 @@ import {Link, useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import {useEffect, useState} from "react";
 import LeaveReview from "./Review/LeaveReview";
-import {useSelector} from "react-redux";
+
+import useNotifications from "../../hooks/notificationsHook";
 
 const Campground = () => {
+    const {user, authToken} = useNotifications();
     const params = useParams();
     const navigate = useNavigate();
     const [campground, setCampground] = useState(null);
-    const user = useSelector(state => state.auth.user);
+
     useEffect(() => {
         axios.get(`http://localhost:3000/campgrounds/${params.campgroundId}`)
             .then(response => {
@@ -23,7 +25,11 @@ const Campground = () => {
     const deleteCampground = async (e) => {
         e.preventDefault()
         try {
-            const response = await axios.delete(`http://localhost:3000/campgrounds/${params.campgroundId}`)
+            const response = await axios.delete(`http://localhost:3000/campgrounds/${params.campgroundId}?user=${user}`, {
+                headers: {
+                    Authorization: `Bearer ${authToken}`
+                }
+            })
             if (response.status === 200) {
                 navigate('/campgrounds');
             }

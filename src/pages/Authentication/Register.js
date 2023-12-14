@@ -1,18 +1,24 @@
 import {useNavigate} from "react-router-dom";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import {authActions} from "../../store/auth";
 import {useDispatch} from "react-redux";
 import useNotifications from "../../hooks/notificationsHook";
+import {Form, Button} from "react-bootstrap";
 
 const Register = () => {
-    const {notificationSuccess} = useNotifications()
+    const {notificationSuccess, isAuthenticated} = useNotifications()
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/campgrounds');
+        }
+    }, [isAuthenticated, navigate]);
     const handleUsernameChange = (event) => {
         setUsername(event.target.value);
     }
@@ -25,20 +31,28 @@ const Register = () => {
         setPassword(event.target.value);
     }
 
+    const [validated, setValidated] = useState(false);
     const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            const data = {username, email, password};
-            const response = await axios.post("http://localhost:3000/register", data)
-            if (response.status === 200) {
-                dispatch(authActions.registerSuccess(response.data.registerData))
-                notificationSuccess(response.data.message)
-                navigate('/campgrounds')
+        const form = event.currentTarget;
+        if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+        } else {
+            event.preventDefault();
+            try {
+                const data = {username, email, password};
+                const response = await axios.post("http://localhost:3000/register", data)
+                if (response.status === 200) {
+                    dispatch(authActions.registerSuccess(response.data.registerData))
+                    notificationSuccess(response.data.message)
+                    navigate('/campgrounds')
+                }
+            } catch (e) {
+                console.log("Error in Register: ", e)
             }
-        } catch (e) {
-            console.log("Error in Register: ", e)
-        }
 
+        }
+        setValidated(true);
     }
     return (<div className="container d-flex justify-content-center align-items-center mt-5">
         <div className="row">
@@ -51,36 +65,49 @@ const Register = () => {
                     />
                     <div className="card-body">
                         <h5 className="card-title">Register</h5>
-                        <form method="POST" className="validated-form" noValidate
-                              onSubmit={handleSubmit}>
-                            <div className="mb-3">
-                                <label className="form-label" htmlFor="username">
-                                    Username
-                                </label>
-                                <input className="form-control" type="text" id="username" name="username" required
-                                       onChange={handleUsernameChange}
-                                       autoFocus/>
-                                <div className="valid-feedback">Looks good!</div>
-                            </div>
-                            <div className="mb-3">
-                                <label className="form-label" htmlFor="email">
-                                    Email
-                                </label>
-                                <input className="form-control" type="email" id="email" name="email" required
-                                       onChange={handleEmailChange}/>
-                                <div className="valid-feedback">Looks good!</div>
-                            </div>
-                            <div className="mb-3">
-                                <label className="form-label" htmlFor="password">
-                                    Password
-                                </label>
-                                <input className="form-control" type="password" id="password" name="password"
-                                       onChange={handlePasswordChange}
-                                       required/>
-                                <div className="valid-feedback">Looks good!</div>
-                            </div>
-                            <button className="btn btn-success btn-block">Register</button>
-                        </form>
+                        <Form className="validated-form" noValidate onSubmit={handleSubmit}
+                              validated={validated}>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Username</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    id="username"
+                                    name="username"
+                                    required
+                                    onChange={handleUsernameChange}
+                                    autoFocus
+                                />
+                                <Form.Control.Feedback type="valid">Looks good!</Form.Control.Feedback>
+                            </Form.Group>
+
+                            <Form.Group className="mb-3">
+                                <Form.Label>Email</Form.Label>
+                                <Form.Control
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    required
+                                    onChange={handleEmailChange}
+                                />
+                                <Form.Control.Feedback type="valid">Looks good!</Form.Control.Feedback>
+                            </Form.Group>
+
+                            <Form.Group className="mb-3">
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    onChange={handlePasswordChange}
+                                    required
+                                />
+                                <Form.Control.Feedback type="valid">Looks good!</Form.Control.Feedback>
+                            </Form.Group>
+
+                            <Button className="btn btn-success btn-block" type="submit">
+                                Register
+                            </Button>
+                        </Form>
                     </div>
                 </div>
             </div>

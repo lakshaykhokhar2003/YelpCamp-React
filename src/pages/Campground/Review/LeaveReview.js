@@ -2,41 +2,66 @@ import styles from './LeaveReview.module.css';
 import ShowPageMap from "../../../maps/ShowPageMap";
 import {useRef, useState} from "react";
 import axios from "axios";
+import useNotifications from "../../../hooks/notificationsHook";
+import {Button, Form} from "react-bootstrap";
 
 const LeaveReview = (props) => {
+    const {authToken} = useNotifications()
+    const {notificationSuccess} = useNotifications()
     const [rating, setRating] = useState(0);
     const handleRatingChange = (event) => {
         setRating(parseInt(event.target.value));
     };
     const commentRef = useRef()
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        const body = commentRef.current.value
-        const user = props.currentUser
-        let review
-        if (rating === 0) {
-            review = {body, rating: 1, user}
+    const [validated, setValidated] = useState(false);
+    const handleSubmit = async (event) => {
+        const form = event.currentTarget;
+        if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
         } else {
-            review = {body, rating, user}
-        }
-
-        try {
-            const response = await axios.post(`http://localhost:3000/campgrounds/${props.campground._id}/reviews`, review)
-            if (response.status === 200) {
-                window.location.reload()
+            event.preventDefault()
+            const body = commentRef.current.value
+            const user = props.currentUser
+            let review
+            if (rating === 0) {
+                review = {body, rating: 1, user}
+            } else {
+                review = {body, rating, user}
             }
-        } catch (e) {
-            console.log("Error in LeaveReview: ", e)
-        }
-    }
 
+            try {
+                const response = await axios.post(`http://localhost:3000/campgrounds/${props.campground._id}/reviews`, review, {
+                    headers: {
+                        Authorization: `Bearer ${authToken}`
+                    }
+                })
+                if (response.status === 200) {
+                    notificationSuccess(response.data.message)
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1000)
+                }
+            } catch (e) {
+                console.log("Error in LeaveReview: ", e)
+            }
+        }
+        setValidated(true);
+    }
+    const [review, setReview] = useState(props.campground.reviews)
     const deleteReview = async (e, reviewId) => {
         e.preventDefault()
+        const user = props.currentUser
         try {
-            const response = await axios.delete(`http://localhost:3000/campgrounds/${props.campground._id}/reviews/${reviewId}`)
+            const response = await axios.delete(`http://localhost:3000/campgrounds/${props.campground._id}/reviews/${reviewId}?user=${user}`, {
+                headers: {
+                    Authorization: `Bearer ${authToken}`
+                }
+            })
             if (response.status === 200) {
-                window.location.reload()
+                setReview(review.filter(review => review._id !== reviewId))
+                notificationSuccess(response.data.message)
             }
         } catch (e) {
             console.log("Error in LeaveReview: ", e)
@@ -46,8 +71,8 @@ const LeaveReview = (props) => {
     if (props.currentUser) {
         addReviewForm = (<>
             <h2>Leave a Review</h2>
-            <form className="mb-3 validated-form" onSubmit={handleSubmit} noValidate>
-                <div className="mb-3">
+            <Form className="mb-3 validated-form" onSubmit={handleSubmit} noValidate validated={validated}>
+                <Form.Group className="mb-3">
                     <fieldset className={styles['starability-basic']}>
                         <input
                             type="radio"
@@ -116,24 +141,34 @@ const LeaveReview = (props) => {
                         </label>
 
                     </fieldset>
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="" className="form-label">Review</label>
-                    <textarea className='form-control' name="review[body]" id="body" cols="30" rows="3"
-                              required ref={commentRef}></textarea>
-                    <div className="valid-feedback">
-                        Looks Good
-                    </div>
-                </div>
-                <button className="btn btn-success">Submit</button>
-            </form>
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                    <Form.Label>Review</Form.Label>
+                    <Form.Control
+                        as="textarea"
+                        className="form-control"
+                        name="review[body]"
+                        id="body"
+                        cols="30"
+                        rows="3"
+                        required
+                        ref={commentRef}
+                    />
+                    <Form.Control.Feedback type="valid">Looks Good</Form.Control.Feedback>
+                </Form.Group>
+
+                <Button className="btn btn-success" type="submit">
+                    Submit
+                </Button>
+            </Form>
         </>)
     }
 
     return (<>
         <ShowPageMap coordinates={props.campground.geometry.coordinates}/>
         {addReviewForm}
-        {props.campground.reviews.map((review, index) => (<div key={index} className="card mb-3">
+        {review.map((review, index) => (<div key={index} className="card mb-3">
             <div className="card-body">
                 <h5 className="card-title">By {review.author.username}</h5>
                 <p className={styles[["starability-result"]]} data-rating={review.rating}>
