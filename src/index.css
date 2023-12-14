@@ -35,11 +35,10 @@ code {
 
 .carousel-item img {
     max-height: 700px;
-    object-fit: cover;
+    object-fit: contain;
 }
 
 .rounded-start {
     max-height: 366px;
-    aspect-ratio: 4/3;
     object-fit: contain;
 }

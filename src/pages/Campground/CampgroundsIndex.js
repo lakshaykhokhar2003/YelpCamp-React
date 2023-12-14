@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 const CampgroundsIndex = (props) => {
     return (<div className="card mb-3" key={props.campground._id}>
         <div className="row g-0">
-            <div className="col-md-4">
+            <div className="col-md-4 d-flex justify-content-center">
                 <img
                     src={(props.campground.images[1] && props.campground.images[1].url) || (props.campground.images[0] && props.campground.images[0].url) || "https://source.unsplash.com/collection/483251/640"}
                     className="img-fluid rounded-start"
