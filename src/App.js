@@ -11,7 +11,8 @@ import Login from "./pages/Authentication/Login";
 import Register from "./pages/Authentication/Register";
 import {Provider} from "react-redux";
 import store from "./store/index.js"
-import {ToastContainer} from "react-toastify";
+import {Flip, ToastContainer} from "react-toastify";
+
 
 const router = createBrowserRouter([{
     path: "/", element: <Home/>, errorElement: <Error/>
@@ -29,7 +30,7 @@ function App() {
     return <Provider store={store}>
         <>
             <RouterProvider router={router}/>
-            <ToastContainer/>
+            <ToastContainer transition={Flip} position="top-center"/>
         </>
     </Provider>;
 }

@@ -10,7 +10,7 @@ const RootLayout = () => {
 
     useEffect(() => {
         if (isSuccess) {
-            toast.success(message, {autoClose: 3000});
+            toast.success(message, {autoClose: 3000, theme: "dark"});
             notificationClear();
         }
         if (error) {
