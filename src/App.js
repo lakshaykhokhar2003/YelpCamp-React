@@ -30,7 +30,7 @@ function App() {
     return <Provider store={store}>
         <>
             <RouterProvider router={router}/>
-            <ToastContainer transition={Flip} position="top-center"/>
+            <ToastContainer transition={Flip} position="top-center" limit={2}/>
         </>
     </Provider>;
 }
