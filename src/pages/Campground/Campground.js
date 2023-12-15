@@ -6,7 +6,7 @@ import LeaveReview from "./Review/LeaveReview";
 import useNotifications from "../../hooks/notificationsHook";
 
 const Campground = () => {
-    const {user, authToken} = useNotifications();
+    const {user, authToken, notificationError, notificationSuccess} = useNotifications();
     const params = useParams();
     const navigate = useNavigate();
     const [campground, setCampground] = useState(null);
@@ -17,6 +17,7 @@ const Campground = () => {
                 setCampground(response.data.campgrounds)
             })
             .catch(error => {
+                notificationError('Error fetching campgrounds')
                 console.error('Error fetching campgrounds:', error);
             });
 
@@ -31,9 +32,13 @@ const Campground = () => {
                 }
             })
             if (response.status === 200) {
+                notificationSuccess(response.data.message)
                 navigate('/campgrounds');
+            } else {
+                notificationError(response.data.message)
             }
         } catch (err) {
+            notificationError("Error deleting campground")
             console.log("Error: ", err.message)
         }
     }
@@ -132,7 +137,7 @@ const Campground = () => {
                             <li className="list-group-item text-muted">
                                 {campground.location}
                             </li>
-                            <li className="list-group-item ">Submited By {campground.author.username}</li>
+                            <li className="list-group-item ">Submitted By {campground.author.username}</li>
                             <li className="list-group-item">$
                                 {campground.price} Per Night
                             </li>

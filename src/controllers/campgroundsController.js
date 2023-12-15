@@ -81,7 +81,7 @@ module.exports.updateCampgrounds = async (req, res) => {
             }
             await campground.updateOne({$pull: {images: {filename: {$in: req.body.deleteImages}}}})
         }
-        return res.status(200).json({message: 'Successfully updated campground'});
+        return res.status(200).json({message: 'Successfully Updated The Campground'});
     } catch (err) {
         console.log("Error in campgrounds (edit): ", err.message)
         res.status(500).json({message: err.message});
@@ -97,7 +97,7 @@ module.exports.createCampgrounds = async (req, res) => {
         campground.geometry = geoData.body.features[0].geometry
         campground.images = req.files.map(f => ({url: f.path, filename: f.filename}))
         await campground.save();
-        return res.status(200).json({message: 'Successfully created campground', campground});
+        return res.status(200).json({message: 'Successfully Created A Campground', campground});
     } catch (err) {
         console.log("Error in campgrounds (adding new): ", err.message)
         res.status(500).json({message: err.message});

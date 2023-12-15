@@ -17,7 +17,7 @@ router.route('/register')
             return res.status(200).json({message: 'Welcome to Yelp Camp!!!', registerData: data});
         } catch (err) {
             console.log(`Error: ${err.message}`);
-            return res.status(500).json({error: err.message});
+            return res.status(500).json({message: err.message});
         }
     })
 
@@ -31,7 +31,7 @@ router.route('/login')
             return res.status(200).json({message: 'Welcome Back!', data});
         } catch (err) {
             console.log(`Error: ${err.message}`);
-            return res.status(500).json({error: err.message});
+            return res.status(500).json({message: err.message});
         }
     });
 

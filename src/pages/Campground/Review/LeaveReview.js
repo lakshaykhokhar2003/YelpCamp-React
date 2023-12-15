@@ -7,7 +7,7 @@ import {Button, Form} from "react-bootstrap";
 
 const LeaveReview = (props) => {
     const {authToken} = useNotifications()
-    const {notificationSuccess} = useNotifications()
+    const {notificationSuccess, notificationError} = useNotifications()
     const [rating, setRating] = useState(0);
     const handleRatingChange = (event) => {
         setRating(parseInt(event.target.value));
@@ -42,8 +42,11 @@ const LeaveReview = (props) => {
                     setTimeout(() => {
                         window.location.reload()
                     }, 1000)
+                } else {
+                    notificationError(response.data.me)
                 }
             } catch (e) {
+                notificationError("Error Adding Review")
                 console.log("Error in LeaveReview: ", e)
             }
         }
@@ -62,8 +65,11 @@ const LeaveReview = (props) => {
             if (response.status === 200) {
                 setReview(review.filter(review => review._id !== reviewId))
                 notificationSuccess(response.data.message)
+            } else {
+                notificationError(response.data.message)
             }
         } catch (e) {
+            notificationError("Error Deleting Review")
             console.log("Error in LeaveReview: ", e)
         }
     }

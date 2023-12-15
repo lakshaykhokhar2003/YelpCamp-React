@@ -13,10 +13,10 @@ router.route('/')
             campground.reviews.push(review);
             await review.save();
             await campground.save();
-            return res.status(200).json({message: 'Created a new review', review});
+            return res.status(200).json({message: 'Successfully added the review', review});
         } catch (err) {
             console.log("Error in reviewsRoutes: ", err.message)
-            res.status(500).json({error: err.message});
+            res.status(500).json({message: err.message});
         }
     })
 
@@ -26,10 +26,10 @@ router.route('/:reviewId')
             const {id, reviewId} = req.params
             await Campgrounds.findByIdAndUpdate(id, {$pull: {reviews: reviewId}})
             await Review.findByIdAndDelete(reviewId);
-            return res.status(200).json({message: 'Successfully deleted review'});
+            return res.status(200).json({message: 'Successfully deleted the review'});
         } catch (err) {
             console.log("Error in reviewsRoutes: ", err.message)
-            res.status(500).json({error: err.message});
+            res.status(500).json({message: err.message});
         }
     })
 

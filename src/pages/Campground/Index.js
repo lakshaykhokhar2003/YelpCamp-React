@@ -3,9 +3,11 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import CampgroundsIndex from "./CampgroundsIndex";
 import ClusterMap from "../../maps/ClusterMap";
+import useNotifications from "../../hooks/notificationsHook";
 
 const AllCampgrounds = () => {
     const [campgrounds, setCampgrounds] = useState([]);
+    const {notificationError} = useNotifications()
 
     useEffect(() => {
         axios.get('http://localhost:3000/campgrounds')
@@ -14,6 +16,7 @@ const AllCampgrounds = () => {
                 // console.log(response.data.campgrounds);
             })
             .catch(error => {
+                notificationError('Error fetching campgrounds')
                 console.error('Error fetching campgrounds:', error);
             });
 

@@ -7,7 +7,7 @@ import useNotifications from "../../hooks/notificationsHook";
 import {Form, Button} from "react-bootstrap";
 
 const Login = () => {
-    const {isAuthenticated, notificationSuccess} = useNotifications();
+    const {isAuthenticated, notificationSuccess, notificationError} = useNotifications();
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -46,15 +46,18 @@ const Login = () => {
                     dispatch(authActions.login(response.data.data));
                     notificationSuccess(response.data.message);
                     navigate(prevUrl || '/campgrounds');
+                } else {
+                    notificationError(response.data.message);
                 }
             } catch (e) {
+                notificationError('Error logging in');
                 console.log(e);
             }
         }
 
         setValidated(true);
     };
-    return (<div className="container d-flex justify-content-center align-items-center mt-5">
+    return (<div className="container mt-5">
         <div className="row">
             <div className="col-md-6 offset-md-3 col-xl-4 offset-xl-4">
                 <div className="card shadow">

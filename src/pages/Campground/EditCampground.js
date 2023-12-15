@@ -8,7 +8,7 @@ const EditCampground = () => {
     const navigate = useNavigate();
     const loc = useLocation();
     const params = useParams()
-    const {user, authToken, isAuthenticated} = useNotifications()
+    const {user, authToken, isAuthenticated, notificationError} = useNotifications()
 
     const [buttonText, setButtonText] = useState('Edit Campground');
     const [campground, setCampground] = useState(null)
@@ -104,8 +104,11 @@ const EditCampground = () => {
                 if (response.status === 200) {
                     setButtonText('Edit Campground')
                     navigate(`/campgrounds/${params.campgroundId}`);
+                } else {
+                    notificationError(response.data.message)
                 }
             } catch (err) {
+                notificationError("Error Editing In Campground")
                 console.log('Error ', err.message);
             }
         }
@@ -206,7 +209,7 @@ const EditCampground = () => {
                     />
                 </Form.Group>
 
-                <div className="mb-3 d-flex align-items-center justify-content-center">
+                <div className="mb-3 d-flex align-items-center justify-content-center overflow-x-scroll">
                     {imagesMap}
                 </div>
 

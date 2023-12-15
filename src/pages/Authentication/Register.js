@@ -7,7 +7,7 @@ import useNotifications from "../../hooks/notificationsHook";
 import {Form, Button} from "react-bootstrap";
 
 const Register = () => {
-    const {notificationSuccess, isAuthenticated} = useNotifications()
+    const {notificationSuccess, notificationError, isAuthenticated} = useNotifications()
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const [username, setUsername] = useState('');
@@ -46,15 +46,18 @@ const Register = () => {
                     dispatch(authActions.registerSuccess(response.data.registerData))
                     notificationSuccess(response.data.message)
                     navigate('/campgrounds')
+                } else {
+                    notificationError(response.data.message)
                 }
             } catch (e) {
+                notificationError("Error registering")
                 console.log("Error in Register: ", e)
             }
 
         }
         setValidated(true);
     }
-    return (<div className="container d-flex justify-content-center align-items-center mt-5">
+    return (<div className="container mt-5">
         <div className="row">
             <div className="col-md-6 offset-md-3 col-xl-4 offset-xl-4">
                 <div className="card shadow">
