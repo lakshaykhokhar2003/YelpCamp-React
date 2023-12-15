@@ -42,3 +42,8 @@ code {
     max-height: 366px;
     object-fit: contain;
 }
+
+.card-img {
+    max-height: 200px;
+    object-fit: contain;
+}

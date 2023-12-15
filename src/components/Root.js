@@ -14,7 +14,7 @@ const RootLayout = () => {
             notificationClear();
         }
         if (error) {
-            toast.error(message, {autoClose: 3000});
+            toast.error(message, {autoClose: 3000, theme: "dark"});
             notificationClear();
         }
     }, [isSuccess, error, message, notificationClear])
