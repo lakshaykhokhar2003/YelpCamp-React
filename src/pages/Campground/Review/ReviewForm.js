@@ -39,7 +39,7 @@ const ReviewForm = (props) => {
                     notificationSuccess(response.data.message)
                     setTimeout(() => {
                         window.location.reload()
-                    }, 1000)
+                    }, 2000)
                 } else {
                     notificationError(response.data.me)
                 }

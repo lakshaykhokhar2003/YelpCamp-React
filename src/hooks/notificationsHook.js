@@ -34,7 +34,7 @@ const useNotifications = () => {
                 toast.error(message, {autoClose: 2000});
                 notificationClear();
             }
-        }, [isSuccess, error, message, notificationClear, toast]);
+        });
     }
     const logoutHandler = () => {
         dispatch(authActions.logout())
