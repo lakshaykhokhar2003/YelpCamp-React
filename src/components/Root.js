@@ -1,23 +1,11 @@
 import {Outlet} from "react-router-dom";
 import HomeNavBar from "./HomeNavBar";
-import {useEffect} from "react";
-import {toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useNotifications from "../hooks/notificationsHook";
 
 const RootLayout = () => {
-    const {notificationClear, isSuccess, error, message} = useNotifications()
-
-    useEffect(() => {
-        if (isSuccess) {
-            toast.success(message, {autoClose: 3000, theme: "dark"});
-            notificationClear();
-        }
-        if (error) {
-            toast.error(message, {autoClose: 3000, theme: "dark"});
-            notificationClear();
-        }
-    }, [isSuccess, error, message, notificationClear])
+    const {useNotificationEffect} = useNotifications()
+    useNotificationEffect();
 
     return (<>
         <header>

@@ -1,15 +1,15 @@
 import {Link, useLocation} from "react-router-dom";
 import styles from './Home.module.css';
-import {useDispatch, useSelector} from "react-redux";
-import {authActions} from "../store/auth";
+import useNotifications from "../hooks/notificationsHook";
+
 
 const Home = () => {
-    const dispatch = useDispatch()
+    const {logoutHandler, useNotificationEffect, isAuthenticated} = useNotifications()
+    useNotificationEffect();
+
     const location = useLocation()
-    const isAuth = useSelector(state => state.auth.isAuthenticated);
-    const logoutHandler = () => {
-        dispatch(authActions.logout())
-    }
+
+
     return (<div
         className={`${styles.backgroundImage} d-flex text-center text-white bg-dark flex-column pt-3 align-items-center `}>
         <header
@@ -19,11 +19,11 @@ const Home = () => {
                 <Link className={`${styles[['nav-link']]} ${styles.active}`} aria-current="page" href="#"
                       to='/'>Home</Link>
                 <Link className={styles[['nav-link']]} to='/campgrounds'>Campgrounds</Link>
-                {!isAuth && (<>
+                {!isAuthenticated && (<>
                     <Link className={styles[['nav-link']]} state={{prevUrl: location.pathname}} to='/login'>Login</Link>
                     <Link className={styles[['nav-link']]} to='/register'>Register</Link>
                 </>)}
-                {isAuth && <Link onClick={logoutHandler} className={styles[['nav-link']]} to="#">Logout</Link>}
+                {isAuthenticated && <Link onClick={logoutHandler} className={styles[['nav-link']]} to="#">Logout</Link>}
             </nav>
         </header>
         <div

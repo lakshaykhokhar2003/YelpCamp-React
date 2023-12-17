@@ -1,21 +1,13 @@
 import {Link, useLocation} from "react-router-dom";
 import classes from "./HomeNavBar.module.css";
-import {useDispatch, useSelector} from "react-redux";
-import {authActions} from "../store/auth";
 import useNotifications from "../hooks/notificationsHook";
 
 const MainNavbar = () => {
-    const {notificationSuccess} = useNotifications()
-    const dispatch = useDispatch()
+    const {isAuthenticated, logoutHandler} = useNotifications()
     const location = useLocation()
-    const isAuth = useSelector(state => state.auth.isAuthenticated);
-    const logoutHandler = () => {
-        dispatch(authActions.logout())
-        notificationSuccess('Goodbye!')
-    }
+
 
     return (<nav className="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
-
         <div className={`container-fluid ${classes.navLinks} d-lg-flex flex-lg-row`}>
             <Link className="navbar-brand  text-white p-2" to="#">Yelp Camp</Link>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -28,11 +20,11 @@ const MainNavbar = () => {
                 <Link to="/campgrounds/new" className="nav-link">New Campgrounds</Link>
             </div>
             <div className="navbar-nav ml-auto">
-                {!isAuth && (<>
+                {!isAuthenticated && (<>
                     <Link to="/login" className="nav-link" state={{prevUrl: location.pathname}}>Login</Link>
                     <Link to="/register" className="nav-link">Register</Link>
                 </>)}
-                {isAuth && <Link onClick={logoutHandler} to='/campgrounds'>Logout</Link>}
+                {isAuthenticated && <Link onClick={logoutHandler} to='/campgrounds'>Logout</Link>}
             </div>
         </div>
     </nav>);

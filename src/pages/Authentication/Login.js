@@ -19,10 +19,10 @@ const Login = () => {
 
     useEffect(() => {
         if (isAuthenticated) {
-            navigate('/campgrounds');
+            navigate(prevUrl || '/campgrounds');
         }
         setPrevUrl(location.state?.prevUrl || '');
-    }, [location, isAuthenticated, navigate]);
+    }, [location, isAuthenticated, navigate, prevUrl]);
 
     const handleUsernameChange = (event) => {
         setUsername(event.target.value);
