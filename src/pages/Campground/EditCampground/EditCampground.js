@@ -26,7 +26,7 @@ const EditCampground = () => {
             }
         };
         fetchCampground();
-    });
+    }, []);
 
     if (!campground) {
         return <div>Loading...</div>;

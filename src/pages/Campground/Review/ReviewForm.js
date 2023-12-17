@@ -41,7 +41,7 @@ const ReviewForm = (props) => {
                         window.location.reload()
                     }, 2000)
                 } else {
-                    notificationError(response.data.me)
+                    notificationError(response.data.message)
                 }
             } catch (e) {
                 notificationError("Error Adding Review")
