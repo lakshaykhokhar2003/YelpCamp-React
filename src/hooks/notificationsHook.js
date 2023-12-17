@@ -41,11 +41,24 @@ const useNotifications = () => {
         notificationSuccess('Goodbye!')
     }
 
+    const notificationPromiseHandler = async (fn, type) => {
+        if (type === 'add') {
+            await toast.promise(fn, {
+                pending: 'Adding Campground...', success: 'Added Successfully 🎉', error: 'Failed To Add 🤯'
+            }, {autoClose: 1500, hideProgressBar: true});
+        } else {
+            await toast.promise(fn, {
+                pending: 'Editing Campground...', success: 'Edited Successfully 🎉', error: 'Failed To Edit 🤯'
+            }, {autoClose: 1500, hideProgressBar: true});
+        }
+    }
+
     return {
         notificationSuccess,
         notificationError,
         notificationClear,
         useNotificationEffect,
+        notificationPromiseHandler,
         logoutHandler,
         isSuccess,
         error,

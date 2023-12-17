@@ -1,12 +1,11 @@
 import {Button, Form} from "react-bootstrap";
 import {useState} from "react";
 import axios from "axios";
-import {toast} from "react-toastify";
 import useNotifications from "../../../hooks/notificationsHook";
 import {useNavigate} from "react-router-dom";
 
 const NewCampgroundForm = () => {
-    const {user, authToken, notificationError} = useNotifications()
+    const {user, authToken, notificationError, notificationPromiseHandler} = useNotifications()
     const navigate = useNavigate();
     const [buttonText, setButtonText] = useState('Add A Campground');
 
@@ -41,26 +40,16 @@ const NewCampgroundForm = () => {
             for (let i = 0; i < images.length; i++) {
                 formData.append('image', images[i]);
             }
-            try {
+            const postReq = async () => {
                 const response = await axios.post('http://localhost:3000/campgrounds/new', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data', Authorization: `Bearer ${authToken}`
                     }
                 });
-
-                const {status} = response;
-
-                const toastPromise = status === 200 ? new Promise(async (resolve) => {
-                    resolve("Added Campground Successfully 🎉");
-                    navigate('/campgrounds');
-                }) : Promise.reject('Failed to add campground 😞');
-
-                await toast.promise(toastPromise, {
-                    pending: 'Adding A Campground',
-                    success: 'Added Campground Successfully 🎉',
-                    error: 'Failed To Add 🤯'
-                }, {autoClose: 1000, hideProgressBar: true});
-
+                response.status === 200 ? navigate('/campgrounds') : notificationError(response.data.message)
+            }
+            try {
+                await notificationPromiseHandler(postReq, 'add')
             } catch (error) {
                 notificationError("Error Adding In Campground")
                 console.error('Error:', error.message);

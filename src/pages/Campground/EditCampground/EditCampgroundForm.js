@@ -1,12 +1,11 @@
 import {Button, Form} from "react-bootstrap";
 import axios from "axios";
-import {toast} from "react-toastify";
 import {useState} from "react";
 import useNotifications from "../../../hooks/notificationsHook";
 import {useNavigate, useParams} from "react-router-dom";
 
 const EditCampgroundForm = (props) => {
-    const {user, authToken, notificationError} = useNotifications()
+    const {user, authToken, notificationError, notificationPromiseHandler} = useNotifications()
     const navigate = useNavigate();
     const params = useParams()
     const [buttonText, setButtonText] = useState('Edit Campground');
@@ -70,25 +69,16 @@ const EditCampgroundForm = (props) => {
             for (let i = 0; i < imagesToDelete.length; i++) {
                 formData.append('deleteImages[]', imagesToDelete[i]);
             }
-
-            try {
+            const postReq = async () => {
                 const response = await axios.post(`http://localhost:3000/campgrounds/${params.campgroundId}/edit`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data', Authorization: `Bearer ${authToken}`
                     }
-                });
-                const {status} = response;
-
-                const toastPromise = status === 200 ? new Promise(async (resolve) => {
-                    resolve("Added Campground Successfully 🎉");
-                    navigate('/campgrounds');
-                }) : Promise.reject('Failed to add campground 😞');
-
-                await toast.promise(toastPromise, {
-                    pending: 'Editing Campground', success: 'Edited Successfully 🎉', error: 'Failed To Edit 🤯'
-                }, {autoClose: 1000, hideProgressBar: true});
-
-
+                })
+                response.status === 200 ? navigate(`/campgrounds/${params.campgroundId}`) : notificationError(response.data.message)
+            }
+            try {
+                await notificationPromiseHandler(postReq, 'edit')
             } catch (err) {
                 notificationError("Error Editing In Campground")
                 setButtonText('Edit Campground')
@@ -188,7 +178,7 @@ const EditCampgroundForm = (props) => {
             />
         </Form.Group>
 
-        <div className="mb-3 d-flex align-items-center justify-content-center overflow-x-scroll">
+        <div className="mb-3 d-flex align-items-center overflow-x-scroll overflow-auto">
             {imagesMap}
         </div>
 
