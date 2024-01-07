@@ -8,7 +8,7 @@ import useNotifications from "../../hooks/notificationsHook";
 const AllCampgrounds = () => {
     const [campgrounds, setCampgrounds] = useState([]);
     const {notificationError} = useNotifications()
-
+    console.log(process.env.REACT_APP_MAPBOX_ACCESS_TOKEN)
     useEffect(() => {
         axios.get('http://localhost:3000/campgrounds')
             .then(response => {

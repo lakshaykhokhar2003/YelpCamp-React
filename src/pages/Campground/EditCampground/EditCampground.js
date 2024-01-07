@@ -8,7 +8,7 @@ const EditCampground = () => {
     const navigate = useNavigate();
     const params = useParams()
     const loc = useLocation();
-    const {isAuthenticated, notificationError} = useNotifications()
+    const {isAuthenticated, user, notificationError} = useNotifications()
 
     const [campground, setCampground] = useState(null);
 
@@ -18,7 +18,7 @@ const EditCampground = () => {
         }
         const fetchCampground = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/campgrounds/${params.campgroundId}/edit`);
+                const response = await axios.get(`http://localhost:3000/campgrounds/${params.campgroundId}/edit?user=${user}`);
                 setCampground(response.data.campground);
             } catch (err) {
                 notificationError("Error Fetching Campground");

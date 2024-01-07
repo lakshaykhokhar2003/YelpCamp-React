@@ -70,7 +70,7 @@ const EditCampgroundForm = (props) => {
                 formData.append('deleteImages[]', imagesToDelete[i]);
             }
             const postReq = async () => {
-                const response = await axios.post(`http://localhost:3000/campgrounds/${params.campgroundId}/edit`, formData, {
+                const response = await axios.post(`http://localhost:3000/campgrounds/${params.campgroundId}/edit?user=${user}`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data', Authorization: `Bearer ${authToken}`
                     }
