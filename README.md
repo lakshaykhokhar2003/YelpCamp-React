@@ -31,6 +31,19 @@ Open [http://localhost:3001](http://localhost:3001) to view it in the browser.
 
 `username: lakshay` `password: 123` or you can create a new account just by clicking on signup button.
 
+## 6 - env file
+
+Create a .env file in the root directory of the project and add the following variables.
+
+```
+REACT_APP_MAPBOX_ACCESS_TOKEN=your_tokem
+REACT_APP_SECRET=your_secret
+REACT_APP_CLOUD_NAME=your_cloud_name_for_cloudinary
+REACT_APP_API_KEY=your_api_key_for_cloudinary
+REACT_APP_API_SECRET=your_api_secret_for_cloudinary
+MONGODB_URI=your_mongodb_uri
+```
+
 ## Features
 
 - [x] User can view the list of all the camps.
