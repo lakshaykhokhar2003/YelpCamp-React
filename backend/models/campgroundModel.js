@@ -21,7 +21,7 @@ const CampgroundSchema = new Schema({
     }, reviews: [{
         type: Schema.Types.ObjectId, ref: 'Review'
     }]
-}, opts)
+}, {timestamps: true}, opts)
 
 const Campgrounds = mongoose.model('Campground', CampgroundSchema);
 module.exports = Campgrounds;

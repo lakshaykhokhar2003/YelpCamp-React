@@ -3,12 +3,12 @@ const Review = require("../models/reviewModel");
 const {cloudinary} = require("../cloudinary");
 const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 
-const mapboxToken = process.env.MAPBOX_ACCESS_TOKEN
+const mapboxToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 const geocoder = mbxGeocoding({accessToken: mapboxToken})
 
 module.exports.showCampgrounds = async (req, res) => {
     try {
-        const campgrounds = await CampgroundRoutes.find({});
+        const campgrounds = await CampgroundRoutes.find({}).sort({createdAt: -1})
         res.json({campgrounds});
     } catch (err) {
         console.log("Error in campgrounds: ", err.message)

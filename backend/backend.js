@@ -12,7 +12,7 @@ const {MongoClient, ServerApiVersion} = require('mongodb');
 
 const passport = require("passport");
 const LocalStrategy = require('passport-local')
-const uri = "mongodb://localhost:27017/yelp-camp";
+const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/yelp-camp'
 
 const User = require('./models/userModel')
 const campgroundRoutes = require('./routes/campgroundRoutes')
@@ -58,7 +58,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 
-mongoose.connect('mongodb://localhost:27017/yelp-camp').then(() => {
+mongoose.connect(uri).then(() => {
     console.log('Connected to MongoDB');
 }).catch((err) => {
     console.error('Error connecting to MongoDB:', err);
