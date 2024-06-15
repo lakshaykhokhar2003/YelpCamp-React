@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import LeaveReview from "./Review/LeaveReview";
 
 import useNotifications from "../../hooks/notificationsHook";
+import Post from "../../assests/post.jpg";
 
 const Campground = () => {
     const {user, authToken, notificationError, notificationSuccess} = useNotifications();
@@ -81,7 +82,11 @@ const Campground = () => {
             <img
                 src="https://source.unsplash.com/collection/483251/640"
                 className="d-block w-100 img-fluid"
-                alt="https://source.unsplash.com/collection/483251/640"
+                alt="Post"
+                onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = Post
+                }}
             />
         </div>)
     } else {

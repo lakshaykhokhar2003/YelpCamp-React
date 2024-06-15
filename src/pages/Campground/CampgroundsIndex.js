@@ -1,4 +1,5 @@
 import {Link} from "react-router-dom";
+import Post from "../../assests/post.jpg";
 
 const CampgroundsIndex = (props) => {
     return (<div className="card mb-3" key={props.campground._id}>
@@ -8,6 +9,10 @@ const CampgroundsIndex = (props) => {
                     src={(props.campground.images[1] && props.campground.images[1].url) || (props.campground.images[0] && props.campground.images[0].url) || "https://source.unsplash.com/collection/483251/640"}
                     className="img-fluid rounded-start"
                     alt=""
+                    onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = Post
+                    }}
                 />
 
             </div>
