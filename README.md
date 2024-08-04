@@ -65,3 +65,24 @@ MONGODB_URI=your_mongodb_uri
 - Mongoose
 - Passport.js
 - Bootstrap
+
+## Screenshots
+
+### Landing Page
+
+![Landing Page](public/screenshots/landing.png)
+
+### Home Page
+![Home Page](public/screenshots/home.png)
+
+### Campground Page
+![Posts Page](public/screenshots/posts.png) 
+
+### Add New Campground Page
+![Add New Post Page](public/screenshots/add%20new.png)
+
+### Edit Post Page
+![Edit Post Page](public/screenshots/edit.png)
+
+### Login/Register Page
+![Login Page](public/screenshots/login.png)
